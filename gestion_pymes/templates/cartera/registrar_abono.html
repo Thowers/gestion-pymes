@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Registrar abono{% endblock %}
+{% block page_title %}Registrar abono{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card p-4">
+      <div class="mb-3 p-3 bg-light rounded">
+        <div class="row text-center">
+          <div class="col">
+            <div class="text-muted small">Cliente</div>
+            <div class="fw-semibold">{{ deuda.cliente.nombre }}</div>
+          </div>
+          <div class="col">
+            <div class="text-muted small">Monto original</div>
+            <div class="fw-semibold">${{ deuda.monto_total|floatformat:0 }}</div>
+          </div>
+          <div class="col">
+            <div class="text-muted small">Saldo pendiente</div>
+            <div class="fw-bold text-danger fs-5">${{ deuda.saldo|floatformat:0 }}</div>
+          </div>
+        </div>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Monto del abono *</label>
+          {{ form.monto }}
+          <div class="form-text">Máximo: ${{ deuda.saldo|floatformat:0 }}</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Observaciones</label>
+          {{ form.notas }}
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-success fw-semibold">
+            <i class="bi bi-cash-coin me-1"></i>Registrar abono
+          </button>
+          <a href="{% url 'detalle_cliente' deuda.cliente.pk %}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+      </form>
+      <div class="mt-3 text-muted small">
+        <i class="bi bi-info-circle me-1"></i>Se generará un comprobante único al registrar el abono.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

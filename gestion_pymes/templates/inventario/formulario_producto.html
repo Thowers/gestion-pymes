@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <div class="card p-4">
+      <form method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Código *</label>
+            {{ form.codigo }}
+            {% if form.codigo.errors %}<div class="text-danger small">{{ form.codigo.errors }}</div>{% endif %}
+          </div>
+          <div class="col-md-8">
+            <label class="form-label fw-semibold">Nombre *</label>
+            {{ form.nombre }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Categoría</label>
+            {{ form.categoria }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Descripción</label>
+            {{ form.descripcion }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Precio de venta *</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              {{ form.precio_venta }}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Precio de costo *</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              {{ form.precio_costo }}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Stock actual</label>
+            {{ form.stock_actual }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Stock mínimo (alerta)</label>
+            {{ form.stock_minimo }}
+          </div>
+        </div>
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg me-1"></i>Guardar
+          </button>
+          <a href="{% url 'lista_productos' %}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Desactivar producto{% endblock %}
+{% block page_title %}Desactivar producto{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card p-4 text-center">
+      <i class="bi bi-exclamation-triangle-fill text-warning fs-1"></i>
+      <h5 class="mt-2">¿Desactivar "{{ producto.nombre }}"?</h5>
+      <p class="text-muted">El producto no se eliminará; quedará inactivo y no aparecerá en el POS.</p>
+      <form method="post" class="d-flex gap-2 justify-content-center">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sí, desactivar</button>
+        <a href="{% url 'lista_productos' %}" class="btn btn-outline-secondary">Cancelar</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

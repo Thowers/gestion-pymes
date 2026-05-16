@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Historial de ventas{% endblock %}
+{% block page_title %}<i class="bi bi-receipt me-2"></i>Historial de ventas{% endblock %}
+
+{% block content %}
+<div class="card p-3 mb-3">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label small">Desde</label>
+      <input type="date" name="desde" value="{{ fecha_desde }}" class="form-control form-control-sm">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label small">Hasta</label>
+      <input type="date" name="hasta" value="{{ fecha_hasta }}" class="form-control form-control-sm">
+    </div>
+    <div class="col-md-4">
+      <button type="submit" class="btn btn-outline-primary btn-sm">Filtrar</button>
+      <a href="{% url 'historial_ventas' %}" class="btn btn-link btn-sm">Limpiar</a>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Cajero</th><th>Pago</th><th>Items</th><th class="text-end">Total</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for v in ventas %}
+        <tr>
+          <td>{{ v.numero_formateado }}</td>
+          <td>{{ v.fecha|date:"d/m/Y H:i" }}</td>
+          <td>{{ v.cliente.nombre|default:"—" }}</td>
+          <td>{{ v.usuario.username|default:"—" }}</td>
+          <td><span class="badge bg-secondary">{{ v.get_tipo_pago_display }}</span></td>
+          <td>{{ v.detalles.count }}</td>
+          <td class="text-end fw-semibold">${{ v.total|floatformat:0 }}</td>
+          <td><a href="{% url 'detalle_venta' v.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center text-muted py-4">Sin ventas en el período seleccionado.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

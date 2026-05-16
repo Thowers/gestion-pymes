@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard – GestiónPyMES{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Tarjetas de métricas -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card p-3">
+      <div class="text-muted small">Ventas hoy</div>
+      <div class="fw-bold fs-4 text-success">${{ total_hoy|floatformat:0 }}</div>
+      <div class="text-muted small">{{ num_ventas_hoy }} transacción{{ num_ventas_hoy|pluralize:"es" }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card p-3">
+      <div class="text-muted small">Stock bajo</div>
+      <div class="fw-bold fs-4 {% if productos_bajos > 0 %}text-danger{% else %}text-success{% endif %}">
+        {{ productos_bajos }}
+      </div>
+      <a href="{% url 'lista_productos' %}?bajos=1" class="text-muted small">Ver productos →</a>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card p-3">
+      <div class="text-muted small">Clientes con saldo</div>
+      <div class="fw-bold fs-4 {% if clientes_deuda > 0 %}text-warning{% else %}text-success{% endif %}">
+        {{ clientes_deuda }}
+      </div>
+      <a href="{% url 'lista_clientes' %}?deudores=1" class="text-muted small">Ver clientes →</a>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card p-3 text-center">
+      <a href="{% url 'pos' %}" class="btn btn-primary fw-semibold">
+        <i class="bi bi-cart-plus me-1"></i>Nueva Venta
+      </a>
+      <a href="{% url 'crear_producto' %}" class="btn btn-outline-secondary mt-2 w-100 btn-sm">
+        <i class="bi bi-plus me-1"></i>Nuevo Producto
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <!-- Gráfico de ventas -->
+  <div class="col-md-8">
+    <div class="card p-3">
+      <h6 class="fw-semibold mb-3">Ventas – últimos 7 días</h6>
+      <canvas id="graficoVentas" height="100"></canvas>
+    </div>
+  </div>
+
+  <!-- Top productos -->
+  <div class="col-md-4">
+    <div class="card p-3">
+      <h6 class="fw-semibold mb-3">Top 5 productos</h6>
+      {% for p in top_productos %}
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-truncate" style="max-width:160px">{{ p.producto__nombre }}</span>
+          <span class="badge bg-light text-dark">{{ p.total_vendido }} uds.</span>
+        </div>
+      {% empty %}
+        <p class="text-muted small">Sin ventas registradas.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Últimas ventas -->
+<div class="card mt-3 p-3">
+  <h6 class="fw-semibold mb-3">Últimas transacciones</h6>
+  <div class="table-responsive">
+    <table class="table table-sm table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>#</th><th>Fecha</th><th>Cliente</th><th>Cajero</th><th>Pago</th><th class="text-end">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in ultimas_ventas %}
+        <tr>
+          <td><a href="{% url 'detalle_venta' v.pk %}">{{ v.numero_formateado }}</a></td>
+          <td>{{ v.fecha|date:"d/m/Y H:i" }}</td>
+          <td>{{ v.cliente.nombre|default:"—" }}</td>
+          <td>{{ v.usuario.get_full_name|default:v.usuario.username }}</td>
+          <td><span class="badge bg-secondary">{{ v.get_tipo_pago_display }}</span></td>
+          <td class="text-end fw-semibold">${{ v.total|floatformat:0 }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center text-muted">No hay ventas hoy.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+const ctx = document.getElementById('graficoVentas').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: {{ grafico_labels|safe }},
+    datasets: [{
+      label: 'Ventas ($)',
+      data: {{ grafico_datos|safe }},
+      backgroundColor: 'rgba(79,70,229,.7)',
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true } }
+  }
+});
+</script>
+{% endblock %}
