@@ -1,0 +1,1 @@
+web: gunicorn gestion_pymes.wsgi --log-file -
