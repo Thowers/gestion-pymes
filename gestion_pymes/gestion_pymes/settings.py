@@ -62,7 +62,6 @@ DATABASES = {
     }
 }
 
-# Habilitar WAL para mejor concurrencia (mencionado en el proyecto)
 from django.db.backends.signals import connection_created
 
 def set_wal_mode(sender, connection, **kwargs):
@@ -87,7 +86,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else []
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
