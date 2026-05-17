@@ -1,8 +1,5 @@
-[phases.setup]
-cmds = ["mkdir -p /app/staticfiles"]
-
 [phases.build]
 cmds = ["python manage.py collectstatic --noinput"]
 
 [phases.start]
-cmd = "python manage.py migrate && gunicorn gestion_pymes.wsgi --log-file -"
+cmd = "python manage.py migrate && python manage.py shell -c \"from core.models import Usuario; Usuario.objects.create_superuser(username='admin', password='admin123', email='admin@test.com', rol='admin', first_name='Administrador') if not Usuario.objects.filter(username='admin').exists() else None\" && gunicorn gestion_pymes.wsgi --log-file -"
