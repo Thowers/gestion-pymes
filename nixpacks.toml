@@ -1,3 +1,6 @@
+[phases.setup]
+cmds = ["mkdir -p /app/staticfiles"]
+
 [phases.build]
 cmds = ["python manage.py collectstatic --noinput"]
 
